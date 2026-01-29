@@ -1,0 +1,97 @@
+# Fintech AI Platform Configuration
+
+# Data paths
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  output_dir: "data/output"
+
+# Model paths
+models:
+  save_dir: "models"
+  credit_risk_dir: "models/credit_risk"
+  fraud_detection_dir: "models/fraud_detection"
+  document_processing_dir: "models/document_processing"
+
+# Credit Risk Configuration
+credit_risk:
+  synthetic_data:
+    n_samples: 10000
+    default_rate: 0.15
+    random_state: 42
+
+  features:
+    - age
+    - income
+    - credit_score
+    - debt_to_income
+    - employment_length
+    - loan_amount
+    - loan_purpose
+    - home_ownership
+
+  model:
+    algorithm: "xgboost"  # Options: xgboost, lightgbm, catboost, random_forest
+    test_size: 0.2
+    cv_folds: 5
+    random_state: 42
+
+# Fraud Detection Configuration
+fraud_detection:
+  synthetic_data:
+    n_samples: 50000
+    fraud_rate: 0.02
+    random_state: 42
+
+  features:
+    - transaction_amount
+    - transaction_hour
+    - transaction_day
+    - merchant_category
+    - card_present
+    - distance_from_home
+    - transaction_frequency
+
+  model:
+    algorithm: "isolation_forest"  # Options: isolation_forest, autoencoder, xgboost
+    contamination: 0.02
+    anomaly_threshold: 0.5
+    random_state: 42
+
+# Document Processing Configuration
+document_processing:
+  synthetic_data:
+    n_samples: 1000
+    document_types:
+      - invoice
+      - bank_statement
+      - tax_form
+      - contract
+
+  ocr:
+    engine: "tesseract"
+    language: "eng"
+    dpi: 300
+
+  nlp:
+    model: "distilbert-base-uncased"
+    max_length: 512
+    extraction_fields:
+      - amount
+      - date
+      - vendor
+      - account_number
+      - tax_id
+
+# Training Configuration
+training:
+  batch_size: 32
+  epochs: 100
+  early_stopping_patience: 10
+  learning_rate: 0.001
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: "logs/app.log"

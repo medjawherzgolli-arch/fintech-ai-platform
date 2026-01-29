@@ -1,0 +1,54 @@
+# Core ML/AI libraries
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+lightgbm>=4.0.0
+catboost>=1.2.0
+
+# Deep Learning
+torch>=2.0.0
+tensorflow>=2.13.0
+
+# NLP & Document Processing
+transformers>=4.30.0
+spacy>=3.6.0
+pytesseract>=0.3.10
+pdf2image>=1.16.3
+Pillow>=10.0.0
+
+# Time series & Anomaly Detection
+statsmodels>=0.14.0
+prophet>=1.1.4
+pyod>=1.1.0
+
+# Imbalanced learning (for fraud detection)
+imbalanced-learn>=0.11.0
+
+# Data visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.15.0
+
+# API & Web
+fastapi>=0.100.0
+uvicorn>=0.23.0
+pydantic>=2.0.0
+
+# Utilities
+joblib>=1.3.0
+pyyaml>=6.0
+python-dotenv>=1.0.0
+tqdm>=4.65.0
+
+# Jupyter
+jupyter>=1.0.0
+ipykernel>=6.25.0
+ipywidgets>=8.1.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Data validation
+great-expectations>=0.17.0
