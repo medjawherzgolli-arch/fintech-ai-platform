@@ -139,12 +139,13 @@ class FraudDetectionDeepModel:
 
         return df
 
-    def prepare_features(self, df: pd.DataFrame) -> Tuple[pd.DataFrame, Optional[pd.Series]]:
+    def prepare_features(self, df: pd.DataFrame, is_training: bool = False) -> Tuple[pd.DataFrame, Optional[pd.Series]]:
         """
         Prepare features and target.
 
         Args:
             df: Input DataFrame
+            is_training: Whether this is for training (sets feature_names)
 
         Returns:
             Tuple of (features, target)
@@ -169,11 +170,21 @@ class FraudDetectionDeepModel:
         # Filter to existing columns
         feature_cols = [col for col in base_features if col in df.columns]
 
-        X = df[feature_cols].copy()
-        y = df['is_fraud'] if 'is_fraud' in df.columns else None
+        if is_training:
+            # During training, set the feature names
+            self.feature_names = feature_cols
+            self.input_size = len(feature_cols)
+            X = df[feature_cols].copy()
+        else:
+            # During inference, use stored feature names and handle missing columns
+            X = pd.DataFrame()
+            for col in self.feature_names:
+                if col in df.columns:
+                    X[col] = df[col]
+                else:
+                    X[col] = 0  # Fill missing columns with 0
 
-        self.feature_names = feature_cols
-        self.input_size = len(feature_cols)
+        y = df['is_fraud'] if 'is_fraud' in df.columns else None
 
         return X, y
 
@@ -219,7 +230,7 @@ class FraudDetectionDeepModel:
         df = self.preprocess(df)
 
         # Prepare features
-        X, y = self.prepare_features(df)
+        X, y = self.prepare_features(df, is_training=True)
 
         # Split data
         X_train, X_test, y_train, y_test = train_test_split(
