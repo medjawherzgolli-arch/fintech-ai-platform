@@ -133,8 +133,9 @@ elif page == "💳 Credit Risk Assessment":
     )
 
     # Load model based on selections
+    # Version parameter forces cache refresh when models are retrained
     @st.cache_resource
-    def load_credit_model(architecture, data_type):
+    def load_credit_model(architecture, data_type, _version="v3"):
         if architecture == "deep":
             model = CreditRiskDeepModel()
             if data_type == "real":
@@ -350,8 +351,9 @@ elif page == "🚨 Fraud Detection":
     )
 
     # Load model based on selections
+    # Version parameter forces cache refresh when models are retrained
     @st.cache_resource
-    def load_fraud_model(architecture, data_type):
+    def load_fraud_model(architecture, data_type, _version="v3"):
         if architecture == "deep":
             model = FraudDetectionDeepModel()
             if data_type == "real":
