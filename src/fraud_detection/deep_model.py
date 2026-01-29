@@ -163,8 +163,8 @@ class FraudDetectionDeepModel:
         if 'hour_sin' in df.columns:
             base_features.extend(['hour_sin', 'hour_cos', 'day_sin', 'day_cos'])
 
-        # Add merchant categories
-        merchant_cols = [col for col in df.columns if col.startswith('merchant_')]
+        # Add merchant categories (exclude merchant_risk_score which is already in base)
+        merchant_cols = [col for col in df.columns if col.startswith('merchant_') and col != 'merchant_risk_score']
         base_features.extend(merchant_cols)
 
         # Filter to existing columns

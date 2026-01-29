@@ -463,20 +463,27 @@ elif page == "🚨 Fraud Detection":
 
             # Risk factors breakdown
             st.subheader("Risk Factors Analyzed:")
+            risk_factor_count = 0
             if amount > 1000:
                 st.warning("⚠️ Large transaction amount")
+                risk_factor_count += 1
             if hour < 6 or hour > 22:
                 st.warning("⚠️ Unusual transaction time")
+                risk_factor_count += 1
             if not card_present:
                 st.warning("⚠️ Card not present")
+                risk_factor_count += 1
             if distance > 100:
                 st.warning("⚠️ Transaction far from home")
+                risk_factor_count += 1
             if international:
                 st.warning("⚠️ International transaction")
+                risk_factor_count += 1
             if failed_24h > 0:
                 st.warning("⚠️ Recent failed transactions")
+                risk_factor_count += 1
 
-            if risk_factors == 0:
+            if risk_factor_count == 0:
                 st.success("✅ No suspicious patterns detected")
 
     with tab2:
