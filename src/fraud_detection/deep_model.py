@@ -14,7 +14,7 @@ import joblib
 
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset, WeightedRandomSampler
+from torch.utils.data import DataLoader, TensorDataset
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
@@ -246,24 +246,12 @@ class FraudDetectionDeepModel:
         criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.learning_rate)
 
-        # Create weighted sampler for balanced batches
-        class_weights = torch.where(
-            y_train_tensor.squeeze() == 1,
-            pos_weight.item(),
-            1.0
-        )
-        sampler = WeightedRandomSampler(
-            weights=class_weights.cpu(),
-            num_samples=len(class_weights),
-            replacement=True
-        )
-
-        # Create DataLoader
+        # Create DataLoader (no weighted sampler - rely on pos_weight in loss only)
         train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
         train_loader = DataLoader(
             train_dataset,
             batch_size=self.batch_size,
-            sampler=sampler
+            shuffle=True
         )
 
         # Modify model for BCE with logits (remove sigmoid from network)
