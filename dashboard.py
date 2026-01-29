@@ -308,20 +308,24 @@ elif page == "💳 Credit Risk Assessment":
     with tab3:
         st.subheader("Model Feature Importance")
 
-        importance = model.get_feature_importance()
+        # Check if model supports feature importance (XGBoost does, PyTorch doesn't)
+        if hasattr(model, 'get_feature_importance'):
+            importance = model.get_feature_importance()
 
-        fig = px.bar(
-            importance.head(15),
-            x='importance',
-            y='feature',
-            orientation='h',
-            title="Top 15 Most Important Features",
-            labels={'importance': 'Importance Score', 'feature': 'Feature'}
-        )
-        fig.update_layout(yaxis={'categoryorder': 'total ascending'})
-        st.plotly_chart(fig, use_container_width=True)
+            fig = px.bar(
+                importance.head(15),
+                x='importance',
+                y='feature',
+                orientation='h',
+                title="Top 15 Most Important Features",
+                labels={'importance': 'Importance Score', 'feature': 'Feature'}
+            )
+            fig.update_layout(yaxis={'categoryorder': 'total ascending'})
+            st.plotly_chart(fig, use_container_width=True)
 
-        st.dataframe(importance)
+            st.dataframe(importance)
+        else:
+            st.info("Feature importance is not available for PyTorch models. Switch to XGBoost to view feature importance.")
 
 # ============================================================================
 # FRAUD DETECTION PAGE
