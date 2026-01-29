@@ -409,31 +409,60 @@ elif page == "🚨 Fraud Detection":
             failed_24h = st.number_input("Failed transactions in last 24h", 0, 10, 0)
 
         if st.button("🔍 Check for Fraud", key="check_fraud"):
-            # Create assessment
+            # Create DataFrame for model prediction
+            import numpy as np
+
+            transaction = pd.DataFrame([{
+                'transaction_amount': amount,
+                'card_present': 1 if card_present else 0,
+                'distance_from_home': distance,
+                'transaction_frequency_24h': frequency_24h,
+                'avg_transaction_amount': amount,  # Approximate
+                'days_since_last_transaction': 1,
+                'transactions_last_7days': frequency_24h * 3,
+                'failed_transactions_24h': failed_24h,
+                'merchant_risk_score': 0.5,
+                'international': 1 if international else 0,
+                'device_id_change': 0,
+                'transaction_hour': hour,
+                'transaction_day': 3,  # Wednesday
+                'merchant_category': merchant,
+                'timestamp': pd.Timestamp.now()
+            }])
+
+            # Use ML model if loaded, otherwise fallback to rules
+            if model_loaded:
+                fraud_prob = fraud_model.predict_proba(transaction)[0]
+                prediction = fraud_model.predict(transaction)[0]
+                method = "ML Model"
+            else:
+                # Fallback rule-based assessment
+                risk_factors = 0
+                if amount > 1000: risk_factors += 1
+                if hour < 6 or hour > 22: risk_factors += 1
+                if not card_present: risk_factors += 1
+                if distance > 100: risk_factors += 1
+                if international: risk_factors += 1
+                if failed_24h > 0: risk_factors += 1
+                fraud_prob = min(risk_factors * 0.15, 0.95)
+                prediction = 1 if fraud_prob > 0.5 else 0
+                method = "Rule-based"
+
             col1, col2, col3 = st.columns(3)
-
-            # Simple rule-based assessment for demo
-            risk_factors = 0
-            if amount > 1000: risk_factors += 1
-            if hour < 6 or hour > 22: risk_factors += 1
-            if not card_present: risk_factors += 1
-            if distance > 100: risk_factors += 1
-            if international: risk_factors += 1
-            if failed_24h > 0: risk_factors += 1
-
-            fraud_prob = min(risk_factors * 0.15, 0.95)
 
             with col1:
                 st.metric("Fraud Probability", f"{fraud_prob:.1%}")
             with col2:
-                decision = "BLOCK 🚫" if fraud_prob > 0.5 else "APPROVE ✅"
+                decision = "BLOCK 🚫" if prediction == 1 else "APPROVE ✅"
                 st.metric("Decision", decision)
             with col3:
                 risk_level = "HIGH" if fraud_prob > 0.7 else "MEDIUM" if fraud_prob > 0.3 else "LOW"
                 st.metric("Risk Level", risk_level)
 
+            st.caption(f"Prediction method: {method}")
+
             # Risk factors breakdown
-            st.subheader("Risk Factors Detected:")
+            st.subheader("Risk Factors Analyzed:")
             if amount > 1000:
                 st.warning("⚠️ Large transaction amount")
             if hour < 6 or hour > 22:
